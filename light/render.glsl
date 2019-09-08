@@ -3,7 +3,7 @@
 uniform vec2 resolution;
 
 //sample from the 1D distance map
-float sample(vec2 coord, float r, Image tex) {
+float tex2d(vec2 coord, float r, Image tex) {
   return step(r, Texel(tex, coord).r);
 }
 
@@ -19,7 +19,7 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
   vec2 tc = vec2(coord, 0.0);
 
   // The center tex coord, which gives us hard shadows.
-  float center = sample(tc, r, tex);
+  float center = tex2d(tc, r, tex);
 
   // Multiply the blur amount by our distance from center.
   //this leads to more blurriness as the shadow "fades away"
@@ -27,16 +27,16 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
 
   // Use a simple gaussian blur.
   float sum = 0.0;
-  sum += sample(vec2(tc.x - 4.0*blur, tc.y), r, tex) * 0.05;
-  sum += sample(vec2(tc.x - 3.0*blur, tc.y), r, tex) * 0.09;
-  sum += sample(vec2(tc.x - 2.0*blur, tc.y), r, tex) * 0.12;
-  sum += sample(vec2(tc.x - 1.0*blur, tc.y), r, tex) * 0.15;
+  sum += tex2d(vec2(tc.x - 4.0*blur, tc.y), r, tex) * 0.05;
+  sum += tex2d(vec2(tc.x - 3.0*blur, tc.y), r, tex) * 0.09;
+  sum += tex2d(vec2(tc.x - 2.0*blur, tc.y), r, tex) * 0.12;
+  sum += tex2d(vec2(tc.x - 1.0*blur, tc.y), r, tex) * 0.15;
 
   sum += center * 0.16;
-  sum += sample(vec2(tc.x + 1.0*blur, tc.y), r, tex) * 0.15;
-  sum += sample(vec2(tc.x + 2.0*blur, tc.y), r, tex) * 0.12;
-  sum += sample(vec2(tc.x + 3.0*blur, tc.y), r, tex) * 0.09;
-  sum += sample(vec2(tc.x + 4.0*blur, tc.y), r, tex) * 0.05;
+  sum += tex2d(vec2(tc.x + 1.0*blur, tc.y), r, tex) * 0.15;
+  sum += tex2d(vec2(tc.x + 2.0*blur, tc.y), r, tex) * 0.12;
+  sum += tex2d(vec2(tc.x + 3.0*blur, tc.y), r, tex) * 0.09;
+  sum += tex2d(vec2(tc.x + 4.0*blur, tc.y), r, tex) * 0.05;
 
   // Sum of 1.0 -> in light, 0.0 -> in shadow.
   // Multiply the summed amount by our distance, which gives us a radial falloff.

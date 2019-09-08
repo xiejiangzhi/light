@@ -17,6 +17,11 @@ function M.new(opts)
 
   obj.env_color = { 0, 0, 0 }
 
+  -- coord translate
+  obj.x = 0
+  obj.y = 0
+  obj.scale = 1
+
   for k, v in pairs(opts or {}) do
     if obj[k] ~= nil then
       obj[k] = v
@@ -35,7 +40,7 @@ function M:add(x, y, radius, r, g, b, a)
 	local light = {
     x = x, y = y,
     radius = radius, size = size,
-    r = r, g = g, b = b, a = a,
+    r = r, g = g, b = b, a = a or 1,
     scale = canvas_size / size,
 		shadow_map_canvas = love.graphics.newCanvas(canvas_size, 1),
 		full_canvas = love.graphics.newCanvas(size, size),
@@ -64,13 +69,18 @@ function M:finish()
   lg.setColor(1, 1, 1)
   lg.setCanvas()
 
+  local sx, sy
 	for i, light in ipairs(self.lights) do
-    private.generateShadowMap(light)
-    private.generateLight(light)
+    private.generateShadowMap(light, self.x, self.y, self.scale)
+    private.generateLight(light, self.scale)
+    sx = light.x - light.radius
+    sy = light.y - light.radius + light.size
 
     private.drawto(light_buffer, nil, function()
       lg.setBlendMode("add")
-      lg.draw(light.full_canvas, light.x - light.radius, light.y - light.radius + light.size, 0, 1, -1)
+      lg.scale(self.scale)
+      lg.translate(self.x, self.y)
+      lg.draw(light.full_canvas, sx, sy, 0, 1, -1)
       lg.setBlendMode("alpha")
     end)
   end
@@ -90,6 +100,10 @@ function M:resize(w, h)
   light_buffer = lg.newCanvas(w, h)
 end
 
+function M:setTranslate(x, y, scale)
+  self.x, self.y = x, y
+  if scale then self.scale = scale end
+end
 
 -- Clear all lights.
 function M:clear()
@@ -99,17 +113,24 @@ end
 
 -----------------------------
 
-function private.generateShadowMap(light)
-  local sx, sy = light.x - light.radius, light.y - light.radius
+function private.generateShadowMap(light, ox, oy, scale)
+  local sx, sy = (light.x - light.radius + ox) * scale, (light.y - light.radius + oy) * scale
+  scale = canvas_size / (light.size * scale)
+
+  lg.print(''..sx..','..sy..', scale: '..light.scale..' -> '..scale, 10, 10)
 
   private.drawto(shadow_area_canvas, nil, function()
     lg.clear()
     lg.push()
-    lg.scale(light.scale)
+    lg.scale(scale)
     lg.translate(-sx, -sy)
-    lg.draw(scene_canvas, 0, 0)
+    lg.draw(scene_canvas)
     lg.pop()
   end)
+
+  lg.draw(shadow_area_canvas)
+  lg.rectangle('line', 0, 0, shadow_area_canvas:getDimensions())
+  -- lg.rectangle('line', light.x - light.radius, light.y - light.radius, light.size, light.size)
 
   private.drawto(light.shadow_map_canvas, M.shadow_map_shader, function()
     lg.clear()
@@ -118,12 +139,13 @@ function private.generateShadowMap(light)
   end)
 end
 
-function private.generateLight(light)
+function private.generateLight(light, scale)
   private.drawto(light.full_canvas, M.render_light_shader, function()
     lg.clear()
     M.render_light_shader:send("resolution", { light.size, light.size });
     -- M.render_light_shader:send("shadow_color", { 1, 1, 1, 0.5 });
     lg.setColor(light.r, light.g, light.b, light.a)
+    -- lg.scale(scale)
     lg.draw(light.shadow_map_canvas, 0, 0, 0, 1 / light.scale, light.size)
     lg.setColor(1, 1, 1, 1)
   end)

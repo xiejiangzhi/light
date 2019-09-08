@@ -1,28 +1,40 @@
 local Light = require 'light'
+local private = {}
 
 local light_world = Light.new({env_color = { 0.5, 0.5, 0.5 }})
 
 local lg = love.graphics
 
 local light
+local ox, oy = 100, 100
+local scale = 1
 
 function love.load()
   love.resize(lg.getDimensions())
-  light = light_world:add(200, 200, 1000, 1, 0, 0, 0.5)
+  light = light_world:add(200, 200, 200, 1, 0, 0, 1)
+  light_world:setTranslate(ox, oy, scale)
 end
 
 function love.update(dt)
   light.x, light.y = love.mouse.getPosition()
+  light.x = light.x - ox
+  light.y = light.y - oy
 end
 
 function love.draw()
   light_world:begin()
+  private.translate()
 
   for i = 1, 10 do
     lg.circle('fill', 100 + i * 70, 300, 10)
   end
+  private.reset()
 
   light_world:finish()
+
+  private.translate()
+  lg.rectangle('line', light.x - light.radius, light.y - light.radius, light.size, light.size)
+  private.reset()
 end
 
 function love.mousepressed(x, y)
@@ -40,5 +52,15 @@ function love.random_color()
     0.5 + love.math.random() / 2,
     0.5 + love.math.random() / 2,
     0.5
+end
+
+function private.translate()
+  lg.push()
+  lg.translate(ox, oy)
+  -- lg.scale(scale)
+end
+
+function private.reset()
+  lg.pop()
 end
 

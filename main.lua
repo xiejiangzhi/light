@@ -6,8 +6,8 @@ local light_world = Light.new({env_color = { 0.5, 0.5, 0.5 }})
 local lg = love.graphics
 
 local light
-local ox, oy = 100, 100
-local scale = 1
+local ox, oy = 0, 0
+local scale = 0.5
 
 function love.load()
   love.resize(lg.getDimensions())
@@ -17,8 +17,8 @@ end
 
 function love.update(dt)
   light.x, light.y = love.mouse.getPosition()
-  light.x = light.x - ox
-  light.y = light.y - oy
+  light.x = (light.x - ox) / scale
+  light.y = (light.y - oy) / scale
 end
 
 function love.draw()
@@ -32,7 +32,9 @@ function love.draw()
 
   light_world:finish()
 
+  lg.rectangle('line', 150, 150, 100, 100)
   private.translate()
+  lg.rectangle('line', 150, 150, 100, 100)
   lg.rectangle('line', light.x - light.radius, light.y - light.radius, light.size, light.size)
   private.reset()
 end
@@ -57,7 +59,8 @@ end
 function private.translate()
   lg.push()
   lg.translate(ox, oy)
-  -- lg.scale(scale)
+  lg.scale(scale)
+  lg.rotate(0.5)
 end
 
 function private.reset()

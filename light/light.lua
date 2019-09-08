@@ -71,7 +71,8 @@ function M:finish()
 
   local sx, sy
 	for i, light in ipairs(self.lights) do
-    private.generateShadowMap(light, self.x, self.y, self.scale)
+    private.cutLightArea(light, self.x, self.y, self.scale)
+    private.generateShadowMap(light)
     private.generateLight(light, self.scale)
     sx = light.x - light.radius
     sy = light.y - light.radius + light.size
@@ -113,11 +114,11 @@ end
 
 -----------------------------
 
-function private.generateShadowMap(light, ox, oy, scale)
+function private.cutLightArea(light, ox, oy, scale)
   local sx, sy = (light.x - light.radius + ox) * scale, (light.y - light.radius + oy) * scale
   scale = canvas_size / (light.size * scale)
 
-  lg.print(''..sx..','..sy..', scale: '..light.scale..' -> '..scale, 10, 10)
+  -- lg.print(''..sx..','..sy..', scale: '..light.scale..' -> '..scale, 10, 10)
 
   private.drawto(shadow_area_canvas, nil, function()
     lg.clear()
@@ -128,10 +129,12 @@ function private.generateShadowMap(light, ox, oy, scale)
     lg.pop()
   end)
 
-  lg.draw(shadow_area_canvas)
-  lg.rectangle('line', 0, 0, shadow_area_canvas:getDimensions())
+  -- lg.draw(shadow_area_canvas)
+  -- lg.rectangle('line', 0, 0, shadow_area_canvas:getDimensions())
   -- lg.rectangle('line', light.x - light.radius, light.y - light.radius, light.size, light.size)
+end
 
+function private.generateShadowMap(light)
   private.drawto(light.shadow_map_canvas, M.shadow_map_shader, function()
     lg.clear()
     M.shadow_map_shader:send("resolution", { light.size, light.size });
@@ -145,7 +148,6 @@ function private.generateLight(light, scale)
     M.render_light_shader:send("resolution", { light.size, light.size });
     -- M.render_light_shader:send("shadow_color", { 1, 1, 1, 0.5 });
     lg.setColor(light.r, light.g, light.b, light.a)
-    -- lg.scale(scale)
     lg.draw(light.shadow_map_canvas, 0, 0, 0, 1 / light.scale, light.size)
     lg.setColor(1, 1, 1, 1)
   end)

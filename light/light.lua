@@ -56,6 +56,7 @@ end
 
 function M:begin()
   lg.setCanvas(scene_canvas)
+  lg.clear()
 end
 
 function M:finish()

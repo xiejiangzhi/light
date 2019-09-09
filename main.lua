@@ -1,7 +1,8 @@
 local Light = require 'light'
 local private = {}
 
-local light_world = Light.new({env_color = { 0.5, 0.5, 0.5 }})
+local light_world = Light.new({env_color = { 0.3, 0.3, 0.3, 1 }})
+-- local light_world = Light.new()
 
 local lg = love.graphics
 
@@ -10,8 +11,7 @@ local mx, my = 0, 0
 local ox, oy, scale = 100, 200, 0.5
 
 function love.load()
-  love.resize(lg.getDimensions())
-  light = light_world:add(200, 200, 300, 1, 0, 0, 0.5)
+  light = light_world:add(200, 200, 500, 1, 0.1, 0.1, 1)
   light_world:setTranslate(ox, oy, scale)
 end
 
@@ -22,6 +22,15 @@ function love.update(dt)
 end
 
 function love.draw()
+  lg.setColor(0.3, 0.3, 0.3)
+  lg.rectangle('fill', 0, 0, 500, 400)
+  lg.setColor(1, 1, 1, 1)
+  lg.rectangle('fill', 500, 0, 500, 400)
+
+
+  lg.print('FPS: '..love.timer.getFPS(), 10, 10)
+  lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 10, 50)
+
   light_world:begin()
   private.translate()
 
@@ -29,9 +38,17 @@ function love.draw()
     lg.circle('fill', 100 + i * 70, 300, 10)
     lg.circle('fill', 100 + i * 70, 300 + i * 50, 30)
   end
-  lg.setColor(1, 1, 0, 0.5)
+  lg.setColor(1, 0, 0, 0.5)
   lg.circle('fill', 300, 700, 100)
+  lg.setColor(0, 1, 0, 1)
+  lg.circle('fill', 900, 300, 100)
+  lg.setColor(0, 0, 1, 1)
+  lg.circle('fill', 900, 700, 100)
+  lg.setColor(1, 0, 0, 1)
+  lg.circle('fill', 1000, 500, 100)
   lg.setColor(1, 1, 1, 1)
+
+  lg.print("Hello Light", 1200, 800, 5, 10, 10)
 
   private.reset()
 
@@ -42,12 +59,11 @@ function love.draw()
   -- lg.rectangle('line', 150, 150, 100, 100)
   lg.rectangle('line', light.x - light.radius, light.y - light.radius, light.size, light.size)
   private.reset()
-  lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 50, 50)
 end
 
 function love.mousepressed(x, y, btn)
   if btn == 1 then
-    light_world:add(x / scale - ox, y / scale - oy, 300, love.random_color())
+    light = light_world:add(x / scale - ox, y / scale - oy, 500, love.random_color())
   elseif btn == 2 then
     light_world:clear()
   end
@@ -60,10 +76,17 @@ function love.resize(w, h)
 end
 
 function love.random_color()
-  return 0.5 + love.math.random() / 2,
-    0.5 + love.math.random() / 2,
-    0.5 + love.math.random() / 2,
-    0.5
+  local r = love.math.random()
+
+  if r < 0.25 then
+    return 1, 0.1, 0.1, 1
+  elseif r < 0.5 then
+    return 0.1, 1, 0.1, 1
+  elseif r < 0.75 then
+    return 0.1, 0.1, 1, 1
+  else
+    return 1, 1, 1, 1
+  end
 end
 
 function private.translate()

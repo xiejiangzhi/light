@@ -6,7 +6,6 @@ local private = {}
 
 local lg = love.graphics
 
-local scene_canvas, light_buffer
 
 local canvas_size = 512
 
@@ -15,12 +14,16 @@ local shadow_area_canvas = love.graphics.newCanvas(canvas_size, canvas_size)
 function M.new(opts)
   local obj = setmetatable({}, M)
 
-  obj.env_color = { 0, 0, 0 }
+  obj.env_color = { 0, 0, 0, 0 }
 
   -- coord translate
   obj.x = 0
   obj.y = 0
   obj.scale = 1
+  obj.w, obj.h = lg.getDimensions()
+
+  obj.scene_canvas = lg.newCanvas(obj.w, obj.h)
+  obj.light_buffer = lg.newCanvas(obj.w, obj.h)
 
   for k, v in pairs(opts or {}) do
     if obj[k] ~= nil then
@@ -50,35 +53,29 @@ function M:add(x, y, radius, r, g, b, a)
   return light
 end
 
-function M:setEnvColor(r, g, b)
-  self.env_color = { r, g, b }
+function M:setEnvColor(r, g, b, a)
+  self.env_color = { r, g, b, a }
 end
 
 function M:begin()
-  lg.setCanvas(scene_canvas)
+  lg.setCanvas(self.scene_canvas)
   lg.clear()
 end
 
 function M:finish()
   lg.setCanvas()
 
-  lg.draw(scene_canvas)
-  lg.setCanvas(light_buffer)
-  lg.clear()
-  lg.setColor(unpack(self.env_color))
-  lg.rectangle('fill', 0, 0, self.w, self.h)
-  lg.setColor(1, 1, 1)
-  lg.setCanvas()
+  private.reset_light_buffer(self.light_buffer)
 
   local sx, sy
 	for i, light in ipairs(self.lights) do
-    private.cutLightArea(light, self.x, self.y, self.scale)
+    private.cutLightArea(self.scene_canvas, light, self.x, self.y, self.scale)
     private.generateShadowMap(light)
     private.generateLight(light, self.scale)
     sx = light.x - light.radius
     sy = light.y - light.radius + light.size
 
-    private.drawto(light_buffer, nil, function()
+    private.drawto(self.light_buffer, nil, function()
       lg.setBlendMode("add")
       lg.scale(self.scale)
       lg.translate(self.x, self.y)
@@ -87,10 +84,10 @@ function M:finish()
     end)
   end
 
-  private.drawto(nil, nil, function()
-    lg.setBlendMode("add")
-    lg.draw(light_buffer)
-    lg.setBlendMode("alpha")
+  M.draw_light_shader:send('bg_tex', self.scene_canvas)
+  M.draw_light_shader:send('env_color', self.env_color)
+  private.drawto(nil, M.draw_light_shader, function()
+    lg.draw(self.light_buffer)
   end)
 end
 
@@ -98,8 +95,8 @@ function M:resize(w, h)
   assert(w > 0 and h > 0, "Invalid w or h, cannot <= 0")
 
   self.w, self.h = w, h
-  scene_canvas = lg.newCanvas(w, h)
-  light_buffer = lg.newCanvas(w, h)
+  self.scene_canvas = lg.newCanvas(w, h)
+  self.light_buffer = lg.newCanvas(w, h)
 end
 
 function M:setTranslate(x, y, scale)
@@ -115,7 +112,7 @@ end
 
 -----------------------------
 
-function private.cutLightArea(light, ox, oy, scale)
+function private.cutLightArea(scene_canvas, light, ox, oy, scale)
   local sx, sy = (light.x - light.radius + ox) * scale, (light.y - light.radius + oy) * scale
   scale = canvas_size / (light.size * scale)
 
@@ -144,10 +141,10 @@ function private.generateShadowMap(light)
 end
 
 function private.generateLight(light, scale)
+  M.render_light_shader:send('scene_tex', shadow_area_canvas)
   private.drawto(light.full_canvas, M.render_light_shader, function()
     lg.clear()
     M.render_light_shader:send("resolution", { light.size, light.size });
-    -- M.render_light_shader:send("shadow_color", { 1, 1, 1, 0.5 });
     lg.setColor(light.r, light.g, light.b, light.a)
     lg.draw(light.shadow_map_canvas, 0, 0, 0, 1 / light.scale, light.size)
     lg.setColor(1, 1, 1, 1)
@@ -165,6 +162,20 @@ function private.drawto(canvas, shader, fn, fn_args)
   lg.setShader()
   lg.setCanvas()
   lg.pop()
+end
+
+function private.reset_light_buffer(canvas, env_color)
+  lg.setCanvas(canvas)
+  lg.clear()
+  if env_color then
+    lg.setColor(unpack(env_color))
+    lg.rectangle('fill', 0, 0, canvas:getDimensions())
+    lg.setColor(1, 1, 1, 1)
+  end
+  lg.setCanvas()
+end
+
+function private.reset_buffer_canvas()
 end
 
 return M

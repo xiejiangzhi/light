@@ -1,6 +1,12 @@
 Light & Shadow
 ==============
 
+A simple dynamic light shadow library.
+
+
+## Example
+
+!![Example Image](./example.png)
 
 
 ##Usage

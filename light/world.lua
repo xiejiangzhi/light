@@ -166,6 +166,7 @@ function private.generateShadowMap(light, alpha_through)
     lg.clear()
     shadow_map_shader:send("resolution", { light.size, light.size });
     shadow_map_shader:send("alpha_through", alpha_through);
+    shadow_map_shader:send("source_radius", light.source_radius / light.radius);
     lg.draw(shadow_area_canvas)
   end)
 end
@@ -174,6 +175,7 @@ function private.generateLight(light, scale, alpha_through)
   render_light_shader:send('obj_tex', shadow_area_canvas)
   render_light_shader:send("resolution", { light.size, light.size });
   render_light_shader:send("alpha_through", alpha_through);
+  render_light_shader:send("source_radius", light.source_radius / light.radius);
   private.drawto(light.render_canvas, render_light_shader, function()
     lg.clear()
     lg.setColor(light.r, light.g, light.b, light.a)

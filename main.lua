@@ -10,11 +10,12 @@ local lg = love.graphics
 
 local light
 local mx, my = 0, 0
-local ox, oy, scale = 100, 200, 0.5
+local ox, oy, scale = 500, 100, 0.5
 
 function love.load()
-  light = light_world:add(200, 200, 500, 1, 0.1, 0.1, 1)
   light_world:setTranslate(ox, oy, scale)
+  light = light_world:add(200, 200, 500, 1, 0.1, 0.1, 1, { source_radius = 10 })
+  light.source_radius = 35
 end
 
 function love.update(dt)

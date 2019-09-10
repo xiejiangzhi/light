@@ -12,77 +12,66 @@ A simple dynamic light shadow library.
 ##Usage
 
 ```
-local Light = require 'light'
-local light_world = Light.new({env_color = { 0.5, 0.5, 0.5 }})
+local Lib = require 'light'
+local light_world = Lib.World.new()
+local light
+
+local lg = love.grpahics
 
 function love.load()
-  -- init window size, also should call it after resize window
-  love.resize(lg.getDimensions())
-
-  -- create a light (x, y, radius, r, g, b, a)
-  light = light_world:add(200, 200, 200, 1, 0, 0, 1)
-
-  -- set translate if you called translate or scale between `light_world:begin()` and `light_world:finish()`
-  light_world:setTranslate(ox, oy, scale)
+  light = light_world:add(200, 200, 200, 1, 0, 0)
 end
 
 function love.update(dt)
-  -- you can cahgne x, y, r, g, b, a any time
-  mx, my = love.mouse.getPosition()
-  light.x = mx / scale - ox
-  light.y = my / scale - oy
+  light.x, light.y = love.mouse.getPosition()
 end
 
 function love.draw()
-  -- call `begin` before you draw something that need shadow
+  -- reset light world
   light_world:begin()
-
-  private.translate()
 
   for i = 1, 10 do
     lg.circle('fill', 100 + i * 70, 300, 10)
+  end
+
+  -- draw shadow for those objects
+  light_world:track()
+  for i = 1, 10 do
     lg.circle('fill', 100 + i * 70, 300 + i * 50, 30)
   end
-  private.reset()
+  -- stop track, new object is background
+  light_world:stop()
 
-  -- call `finish` after you finish the draw.
-  -- draw light and shadow for your scene items that alpha > 0 
+  for i = 1, 10 do
+    lg.circle('fill', 100 + i * 70, 500 + i * 50, 30)
+  end
+
+  -- draw scene, light and shadow
   light_world:finish()
 
   lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 50, 50)
 end
-
-function love.mousepressed(x, y, btn)
-  if btn == 1 then
-    light_world:add(x / scale - ox, y / scale - oy, 300, love.random_color())
-  elseif btn == 2 then
-    -- clear all light
-    light_world:clear()
-  end
-end
-
-function love.resize(w, h)
-  if w > 0 and h > 0 then
-    light_world:resize(w, h)
-  end
-end
-
-function love.random_color()
-  return 0.5 + love.math.random() / 2,
-    0.5 + love.math.random() / 2,
-    0.5 + love.math.random() / 2,
-    0.5
-end
-
-function private.translate()
-  lg.push()
-  lg.scale(scale)
-  lg.translate(ox, oy)
-end
-
-function private.reset()
-  lg.pop()
-end
 ```
 
+
+## Functions
+
+### World
+
+* `World.new({ env_light = { 0.5, 0.4, 0.5, 0.5 }, alpha_through = 0.3 })` 
+* `World:begin()` reset light world and start track bg pixels.
+* `World:track()` start trace object pixels to generate shadow
+* `World:stop()` stop trace object pixels, back to track bg  pixels
+* `World:finish()` draw bg, objects, light and shadow
+* `World:add(x, y, radius, r, g, b, a)` add a light to world, return `light`
+* `World:remove(light)` remove the light from world
+* `World:clear()` remove all lights
+* `World:setEnvLight(r, g, b, a)`
+* `World:resize(w, h)` you must call it after change window size
+* `World:setTranslate(x, y, scale)` you must call it if your applied `love.graphics.translate` or `love.graphics.scale`
+
+
+### Light
+
+* `Light:setSize(radius)` resize the light
 

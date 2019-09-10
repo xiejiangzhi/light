@@ -1,7 +1,8 @@
 #define PI 3.14159265359
 
 uniform vec2 resolution;
-uniform Image scene_tex;
+uniform Image obj_tex;
+uniform float alpha_through;
 
 // use light (1, 0, 0) to item (0, 0, 1)
 // item will get color: item * light + light * reflectance
@@ -44,9 +45,9 @@ vec4 effect(vec4 color, Image tex, vec2 tex_coords, vec2 screen_coords) {
   float blur = (1./resolution.x) * smoothstep(0., 1., r);
 
   float alpha = sampleTex(tex, tc, r);
-  vec4 scene_col = Texel(scene_tex, vec2(tex_coords.x, 1 - tex_coords.y));
+  vec4 obj_col = Texel(obj_tex, vec2(tex_coords.x, 1 - tex_coords.y));
 
-  if (scene_col.a == 0) {
+  if (obj_col.a == 0) {
     // Use a simple gaussian blur.
     alpha = blurShadow(tex, tc, r, blur, alpha);
   }
@@ -54,8 +55,8 @@ vec4 effect(vec4 color, Image tex, vec2 tex_coords, vec2 screen_coords) {
   // Sum of 1.0 -> in light, 0.0 -> in shadow.
   // Multiply the summed amount by our distance, which gives us a radial falloff.
   float sr = smoothstep(1.0, 0.0, r);
-  if (scene_col.a > 0) {
-    return scene_col * color * sr + color * reflectance * sr;
+  if (obj_col.a > alpha_through) {
+    return obj_col * color * sr + color * reflectance * sr;
   } else {
     return vec4(color.rgb, color.a * alpha * sr);
   }

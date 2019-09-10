@@ -1,8 +1,7 @@
 #define PI 3.14159265359
 
 uniform vec2 resolution;
-
-const float ALPHA_THRESHOLD = 0.01;
+uniform float alpha_through;
 
 vec4 effect(vec4 color, Image img, vec2 texture_coords, vec2 screen_coords) {
   float dist = 1.0;
@@ -26,7 +25,7 @@ vec4 effect(vec4 color, Image img, vec2 texture_coords, vec2 screen_coords) {
     //if we've hit an opaque fragment (occluder), then get new distance
     //if the new distance is below the current, then we'll use that for our ray
     float caster = data.a;
-    if (caster > ALPHA_THRESHOLD) {
+    if (caster > alpha_through) {
       dist = min(dist, dst);
       break;
     }

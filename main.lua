@@ -1,8 +1,10 @@
 local Light = require 'light'
 local private = {}
 
-local light_world = Light.new({env_color = { 0.3, 0.3, 0.3, 1 }})
--- local light_world = Light.new()
+local light_world = Light.World.new({
+  env_light = { 0.3, 0.3, 0.3, 1 },
+  alpha_through = 0.5,
+})
 
 local lg = love.graphics
 
@@ -19,9 +21,12 @@ function love.update(dt)
   mx, my = love.mouse.getPosition()
   light.x = mx / scale - ox
   light.y = my / scale - oy
+  light:setSize(300 + math.sin(love.timer.getTime() / 2) * 200)
 end
 
 function love.draw()
+  light_world:begin()
+
   lg.setColor(0.3, 0.3, 0.3)
   lg.rectangle('fill', 0, 0, 500, 400)
   lg.setColor(1, 1, 1, 1)
@@ -31,7 +36,7 @@ function love.draw()
   lg.print('FPS: '..love.timer.getFPS(), 10, 10)
   lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 10, 50)
 
-  light_world:begin()
+  light_world:track()
   private.translate()
 
   for i = 1, 10 do
@@ -42,8 +47,10 @@ function love.draw()
   lg.circle('fill', 300, 700, 100)
   lg.setColor(0, 1, 0, 1)
   lg.circle('fill', 900, 300, 100)
+  light_world:stop()
   lg.setColor(0, 0, 1, 1)
   lg.circle('fill', 900, 700, 100)
+  light_world:track()
   lg.setColor(1, 0, 0, 1)
   lg.circle('fill', 1000, 500, 100)
   lg.setColor(1, 1, 1, 1)
@@ -93,7 +100,7 @@ function private.translate()
   lg.push()
   lg.scale(scale)
   lg.translate(ox, oy)
-  -- lg.rotate(0.5)
+  lg.rotate(0.5)
 end
 
 function private.reset()

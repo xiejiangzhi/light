@@ -1,8 +1,19 @@
-local Light = require((...)..'.light')
+local M = {}
 
-local path = (...):gsub('%.', '/')
-Light.shadow_map_shader = love.graphics.newShader(path..'/shadow_map.glsl')
-Light.render_light_shader = love.graphics.newShader(path..'/render_light.glsl')
-Light.draw_light_shader = love.graphics.newShader(path..'/draw_light.glsl')
 
-return Light
+local conf = {
+  lib_path = ...,
+  shadow_map_size = 256
+}
+
+local sub_libs = {}
+sub_libs.Light = require((...)..'.light')
+sub_libs.World = require((...)..'.world')
+
+for k, sub_lib in pairs(sub_libs) do
+  M[k] = sub_lib
+  if sub_lib.init then sub_lib.init(sub_libs, conf)
+  end
+end
+
+return M

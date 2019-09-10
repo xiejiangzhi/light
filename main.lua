@@ -41,19 +41,27 @@ function love.draw()
   private.translate()
 
   for i = 1, 10 do
-    lg.circle('fill', 100 + i * 70, 300, 10)
-    lg.circle('fill', 100 + i * 70, 300 + i * 50, 30)
+    lg.circle('fill', 100 + i * 70, 100, 10)
+    lg.circle('fill', 100 + i * 80, 200, 20)
+    lg.circle('fill', 100 + i * 90, 300, 30)
+    lg.circle('fill', 100 + i * 100, 400, 40)
   end
   lg.setColor(1, 0, 0, 0.5)
-  lg.circle('fill', 300, 700, 100)
+  lg.circle('fill', 300, 100, 50)
+  lg.circle('fill', 300, 700, 50)
+
+  lg.setColor(1, 0, 0, 0.7)
+  lg.circle('fill', 500, 100, 50)
+  lg.circle('fill', 500, 700, 50)
+
   lg.setColor(0, 1, 0, 1)
-  lg.circle('fill', 900, 300, 100)
+  lg.circle('fill', 900, 300, 50)
   light_world:stop()
   lg.setColor(0, 0, 1, 1)
-  lg.circle('fill', 900, 700, 100)
+  lg.circle('fill', 900, 700, 50)
   light_world:track()
   lg.setColor(1, 0, 0, 1)
-  lg.circle('fill', 1000, 500, 100)
+  lg.circle('fill', 1000, 500, 50)
 
   light_world:track_light_objs()
   lg.setColor(0.7, 0.7, 0.1, 1)

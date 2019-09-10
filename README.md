@@ -80,3 +80,4 @@ end
 
 * if the `env_light` is `1, 1, 1, 1`, no light and shadow can be draw. In an overly bright environment you will not see light and shadow
 * if the background alpha is too little, we will not see the light because no object can reflect this light into your eyes
+* when you has many light, it will very slow. (I will try to make it faster)

@@ -59,6 +59,8 @@ function love.draw()
   lg.setColor(0.7, 0.7, 0.1, 1)
   lg.print("Hello Light", 1000, 0, 5, 10, 10)
 
+  light_world:track()
+  lg.print("Hello Light", 1500, 0, 5, 10, 10)
   lg.setColor(1, 1, 1, 1)
 
   private.reset()

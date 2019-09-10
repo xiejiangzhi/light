@@ -1,5 +1,6 @@
 local M = {}
 
+
 local conf = {
   lib_path = ...,
   shadow_map_size = 512

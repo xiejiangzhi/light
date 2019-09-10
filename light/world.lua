@@ -20,9 +20,10 @@ function M.init(sub_libs, conf)
   shadow_area_canvas = lg.newCanvas(shadow_map_size, shadow_map_size)
   shadow_map_canvas = lg.newCanvas(shadow_map_size, 1)
 
-  shadow_map_shader = lg.newShader(lib_path..'/shadow_map.glsl')
-  render_light_shader = lg.newShader(lib_path..'/render_light.glsl')
-  draw_light_shader = lg.newShader(lib_path..'/draw_light.glsl')
+  local glsl_path = lib_path:gsub('%.', '/')
+  shadow_map_shader = lg.newShader(glsl_path..'/shadow_map.glsl')
+  render_light_shader = lg.newShader(glsl_path..'/render_light.glsl')
+  draw_light_shader = lg.newShader(glsl_path..'/draw_light.glsl')
 end
 
 function M.new(opts)

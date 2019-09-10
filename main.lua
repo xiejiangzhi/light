@@ -54,9 +54,12 @@ function love.draw()
   light_world:track()
   lg.setColor(1, 0, 0, 1)
   lg.circle('fill', 1000, 500, 100)
-  lg.setColor(1, 1, 1, 1)
 
-  lg.print("Hello Light", 1200, 800, 5, 10, 10)
+  light_world:track_light_objs()
+  lg.setColor(0.7, 0.7, 0.1, 1)
+  lg.print("Hello Light", 1000, 0, 5, 10, 10)
+
+  lg.setColor(1, 1, 1, 1)
 
   private.reset()
 

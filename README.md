@@ -61,6 +61,7 @@ end
 * `World.new({ env_light = { 0.5, 0.4, 0.5, 0.5 }, alpha_through = 0.3 })` if a object alpha less than `alpha_through`, we will not generate shadow for it
 * `World:begin()` reset light world and start track bg pixels.
 * `World:track()` start trace object pixels to generate shadow
+* `World:track_light_objs()` switch to draw object that always is light and it has shadow
 * `World:stop()` stop trace object pixels, back to track bg  pixels
 * `World:finish()` draw bg, objects, light and shadow
 * `World:add(x, y, radius, r, g, b, a)` add a light to world, return `light`

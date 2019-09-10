@@ -1,9 +1,8 @@
 local M = {}
 
-
 local conf = {
   lib_path = ...,
-  shadow_map_size = 256
+  shadow_map_size = 512
 }
 
 local sub_libs = {}

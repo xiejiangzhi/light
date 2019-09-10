@@ -41,6 +41,7 @@ function M.new(opts)
   obj.scene_canvas = lg.newCanvas(obj.w, obj.h)
   obj.object_canvas = lg.newCanvas(obj.w, obj.h)
   obj.light_buffer = lg.newCanvas(obj.w, obj.h)
+  obj.light_obj_canvas = lg.newCanvas(obj.w, obj.h)
 
   for k, v in pairs(opts or {}) do
     if obj[k] ~= nil then
@@ -89,7 +90,13 @@ function M:stop()
   lg.setCanvas(self.scene_canvas)
 end
 
+function M:track_light_objs()
+  lg.setCanvas(self.light_obj_canvas)
+end
+
 function M:finish()
+  lg.setCanvas(self.object_canvas)
+  lg.draw(self.light_obj_canvas)
   lg.setCanvas()
 
   private.reset_light_buffer(self.light_buffer, self.env_light)
@@ -113,6 +120,7 @@ function M:finish()
 
   draw_light_shader:send('bg_tex', self.scene_canvas)
   draw_light_shader:send('obj_tex', self.object_canvas)
+  draw_light_shader:send('light_obj_tex', self.light_obj_canvas)
   draw_light_shader:send('alpha_through', self.alpha_through)
   private.drawto(nil, draw_light_shader, function()
     lg.draw(self.light_buffer)

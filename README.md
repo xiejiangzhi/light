@@ -58,7 +58,7 @@ end
 
 ### World
 
-* `World.new({ env_light = { 0.5, 0.4, 0.5, 0.5 }, alpha_through = 0.3 })` 
+* `World.new({ env_light = { 0.5, 0.4, 0.5, 0.5 }, alpha_through = 0.3 })` if a object alpha less than `alpha_through`, we will not generate shadow for it
 * `World:begin()` reset light world and start track bg pixels.
 * `World:track()` start trace object pixels to generate shadow
 * `World:stop()` stop trace object pixels, back to track bg  pixels
@@ -75,3 +75,8 @@ end
 
 * `Light:setSize(radius)` resize the light
 
+
+## Tips
+
+* if the `env_light` is `1, 1, 1, 1`, no light and shadow can be draw. In an overly bright environment you will not see light and shadow
+* if the background alpha is too little, we will not see the light because no object can reflect this light into your eyes

@@ -1,7 +1,7 @@
 Light & Shadow
 ==============
 
-A simple dynamic light shadow library.
+A simple dynamic light shadow library for LOVE2D 11.2
 
 
 ## Example

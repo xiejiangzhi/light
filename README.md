@@ -5,12 +5,12 @@ A simple dynamic light shadow library for LOVE2D 11.2
 
 It's easy to use, don't need to create body for shadow, directly generate shadow from canvas/image according alpha.
 So it's not fast, and don't support 3D shadow.
-If you want a fast and 3D light shadow library. [Light World](https://github.com/xiejiangzhi/light_world.lua) and [Shadow](https://github.com/matiasah/shadows) is better choice.
+If you want a fast and 3D light shadow library, [Light World](https://github.com/xiejiangzhi/light_world.lua) and [Shadow](https://github.com/matiasah/shadows) is better choice.
 
 
 ## Example
 
-!![Example Image](./example.png)
+![Example Image](./example.png)
 
 
 ##Usage

@@ -3,6 +3,10 @@ Light & Shadow
 
 A simple dynamic light shadow library for LOVE2D 11.2
 
+It's easy to use, don't need to create body for shadow, directly generate shadow from canvas/image according alpha.
+So it's not fast, and don't support 3D shadow.
+If you want a fast and 3D light shadow library. [Light World](https://github.com/xiejiangzhi/light_world.lua) and [Shadow](https://github.com/matiasah/shadows) is better choice.
+
 
 ## Example
 
@@ -83,3 +87,9 @@ end
 * If the `env_light` is `1, 1, 1, 1`, no light and shadow can be draw. In an overly bright environment you will not see light and shadow
 * If the background alpha is too little, we will not see the light because no object can reflect this light into your eyes
 * When you have a lot of light, it will very slow. the light size and quantity will affect performance. (I will try to make it faster)
+
+
+## TODO
+
+* Fix shadow for `source_radius` argument.
+* Support shadow for semitransparent objects.(shadow map able to save four floats.)

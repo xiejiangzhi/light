@@ -85,11 +85,11 @@ function M:begin()
   lg.clear()
 end
 
-function M:track()
+function M:track_obj()
   lg.setCanvas(self.object_canvas)
 end
 
-function M:stop()
+function M:track_bg()
   lg.setCanvas(self.scene_canvas)
 end
 
@@ -126,9 +126,9 @@ function M:finish()
   end
 
   draw_light_shader:send('bg_tex', self.scene_canvas)
+  draw_light_shader:send('light_bg_tex', self.light_bg_canvas)
   draw_light_shader:send('obj_tex', self.object_canvas)
   draw_light_shader:send('light_obj_tex', self.light_obj_canvas)
-  draw_light_shader:send('light_bg_tex', self.light_bg_canvas)
   draw_light_shader:send('alpha_through', self.alpha_through)
   private.drawto(nil, draw_light_shader, function()
     lg.draw(self.light_buffer)

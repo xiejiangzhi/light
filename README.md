@@ -38,13 +38,13 @@ function love.draw()
     lg.circle('fill', 100 + i * 70, 300, 10)
   end
 
-  -- draw shadow for those objects
-  light_world:track()
+  -- track shadow objects
+  light_world:track_obj()
   for i = 1, 10 do
     lg.circle('fill', 100 + i * 70, 300 + i * 50, 30)
   end
-  -- stop track, new object is background
-  light_world:stop()
+  -- draw background
+  light_world:track_bg()
 
   for i = 1, 10 do
     lg.circle('fill', 100 + i * 70, 500 + i * 50, 30)
@@ -63,12 +63,12 @@ end
 ### World
 
 * `World.new({ env_light = { 0.5, 0.4, 0.5, 0.5 }, alpha_through = 0.3 })` if a object alpha less than `alpha_through`, we will not generate shadow for it
-* `World:begin()` reset light world and start track bg pixels.
-* `World:track()` start trace object pixels to generate shadow
-* `World:track_light_objs()` switch to draw object that always is light and it has shadow
-* `World:track_light_bg()` switch to draw object that always is light and it has no shadow
-* `World:stop()` stop trace object pixels, back to track bg  pixels
-* `World:finish()` draw bg, objects, light and shadow
+* `World:begin()` reset light world and start track background pixels.
+* `World:track_obj()` switch to draw object mode, pixels is affected by light and has shadow.
+* `World:track_light_objs()` switch to draw object mode, pixels is always light and has shadow.
+* `World:track_bg()` switch to draw background mode, new pixels is affected by light.
+* `World:track_light_bg()` switch to draw background mode, the pixels always is light and it has no shadow
+* `World:finish()` draw bg, objects, light and shadow to screen.
 * `World:add(x, y, radius, r, g, b, a)` add a light to world, return `light`
 * `World:remove(light)` remove the light from world
 * `World:clear()` remove all lights

@@ -37,7 +37,7 @@ function love.draw()
   lg.print('FPS: '..love.timer.getFPS(), 10, 10)
   lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 10, 50)
 
-  light_world:track()
+  light_world:track_obj()
   private.translate()
 
   for i = 1, 10 do
@@ -56,10 +56,10 @@ function love.draw()
 
   lg.setColor(0, 1, 0, 1)
   lg.circle('fill', 900, 300, 50)
-  light_world:stop()
+  light_world:track_bg()
   lg.setColor(0, 0, 1, 1)
   lg.circle('fill', 900, 700, 50)
-  light_world:track()
+  light_world:track_obj()
   lg.setColor(1, 0, 0, 1)
   lg.circle('fill', 1000, 500, 50)
 
@@ -67,8 +67,12 @@ function love.draw()
   lg.setColor(0.7, 0.7, 0.1, 1)
   lg.print("Hello Light", 1000, 0, 5, 10, 10)
 
-  light_world:track()
+  light_world:track_obj()
   lg.print("Hello Light", 1500, 0, 5, 10, 10)
+
+  light_world:track_light_bg()
+  lg.setColor(1, 1, 0.5, 1)
+  lg.print("Hello Light", 300, -200, 6, 10, 10)
   lg.setColor(1, 1, 1, 1)
 
   private.reset()

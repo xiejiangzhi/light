@@ -26,14 +26,20 @@ function love.update(dt)
 end
 
 function love.draw()
+  lg.setColor(1, 1, 0.3, 1)
+  lg.rectangle('fill', 0, 0, 1300, 450)
+
   light_world:begin()
 
-  lg.setColor(0.3, 0.3, 0.3)
+  lg.setColor(0.3, 0.3, 0.3, 0.7)
   lg.rectangle('fill', 0, 0, 500, 400)
-  lg.setColor(1, 1, 1, 1)
+  lg.setColor(1, 1, 1, 0.7)
   lg.rectangle('fill', 500, 0, 500, 400)
+  lg.setColor(0.21, 0.21, 0.21, 1)
+  lg.rectangle('fill', 1000, 0, 100, 400)
 
-
+  light_world:track_light_bg()
+  lg.setColor(1, 1, 1, 1)
   lg.print('FPS: '..love.timer.getFPS(), 10, 10)
   lg.print('mouse: '..mx..','..my..' light: '..light.x..','..light.y, 10, 50)
 

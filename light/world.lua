@@ -87,22 +87,18 @@ end
 
 function M:track_obj()
   lg.setCanvas(self.object_canvas)
-  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:track_bg()
   lg.setCanvas(self.scene_canvas)
-  lg.setBlendMode('alpha')
 end
 
 function M:track_light_objs()
   lg.setCanvas(self.light_obj_canvas)
-  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:track_light_bg()
   lg.setCanvas(self.light_bg_canvas)
-  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:finish()
@@ -136,7 +132,9 @@ function M:finish()
   draw_light_shader:send('light_obj_tex', self.light_obj_canvas)
   draw_light_shader:send('alpha_through', self.alpha_through)
   private.drawto(nil, draw_light_shader, function()
+    lg.setBlendMode("alpha", "premultiplied")
     lg.draw(self.light_buffer)
+    lg.setBlendMode("alpha", "alphamultiply")
   end)
 end
 

@@ -10,7 +10,9 @@ const float reflectance = 0.1;
 
 vec4 colorMix(vec4 s, vec4 t) {
   s.rgb *= 1 - t.a;
-  s.rgb += t.rgb * t.a;
+  // canvas' rgb default is mixed
+  // s.rgb += t.rgb * t.a;
+  s.rgb += t.rgb;
   s.a += t.a - t.a * s.a;
 
   return s;

@@ -87,21 +87,26 @@ end
 
 function M:track_obj()
   lg.setCanvas(self.object_canvas)
+  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:track_bg()
   lg.setCanvas(self.scene_canvas)
+  lg.setBlendMode('alpha')
 end
 
 function M:track_light_objs()
   lg.setCanvas(self.light_obj_canvas)
+  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:track_light_bg()
   lg.setCanvas(self.light_bg_canvas)
+  lg.setBlendMode('alpha', 'premultiplied')
 end
 
 function M:finish()
+  lg.setBlendMode('alpha')
   lg.setCanvas(self.object_canvas)
   lg.draw(self.light_obj_canvas)
   lg.setCanvas()

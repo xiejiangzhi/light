@@ -1,7 +1,7 @@
 Light & Shadow
 ==============
 
-A simple dynamic light shadow library for LOVE2D 11.2
+A simple dynamic light shadow library for LOVE2D 11.2.
 
 It's easy to use, don't need to create body for shadow, directly generate shadow from canvas/image according alpha.
 So it's not fast, and don't support 3D shadow.
@@ -75,6 +75,8 @@ end
 * `World:setEnvLight(r, g, b, a)`
 * `World:resize(w, h)` you must call it after change window size
 * `World:setTranslate(x, y, scale)` you must call it if your applied `love.graphics.translate` or `love.graphics.scale`
+* `World.env_tex=[canvas/image]`
+* `World.pause=true` Stop light and shadow feature.
 
 
 ### Light
@@ -93,3 +95,4 @@ end
 
 * Fix shadow for `source_radius` argument.
 * Support shadow for semitransparent objects.(shadow map able to save four floats.)
+* Optimize according to [here](https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows#optimizations)

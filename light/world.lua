@@ -29,6 +29,7 @@ end
 function M.new(opts)
   local obj = setmetatable({}, M)
 
+  obj.env_tex = nil
   obj.env_light = { 0.5, 0.5, 0.5, 0.5 }
 
   -- coord translate
@@ -49,6 +50,7 @@ function M.new(opts)
   end
 
   obj.lights = {}
+  obj.pause = nil
 
   return obj
 end
@@ -72,6 +74,8 @@ function M:setEnvLight(r, g, b, a)
 end
 
 function M:begin()
+  if self.pause then return end
+  self.last_canvas = lg.getCanvas()
   lg.setCanvas(self.object_canvas)
   lg.clear()
 
@@ -86,28 +90,33 @@ function M:begin()
 end
 
 function M:track_obj()
+  if self.pause then return end
   lg.setCanvas(self.object_canvas)
 end
 
 function M:track_bg()
+  if self.pause then return end
   lg.setCanvas(self.scene_canvas)
 end
 
 function M:track_light_objs()
+  if self.pause then return end
   lg.setCanvas(self.light_obj_canvas)
 end
 
 function M:track_light_bg()
+  if self.pause then return end
   lg.setCanvas(self.light_bg_canvas)
 end
 
 function M:finish()
+  if self.pause then return end
   lg.setBlendMode('alpha')
   lg.setCanvas(self.object_canvas)
   lg.draw(self.light_obj_canvas)
-  lg.setCanvas()
+  lg.setCanvas(self.last_canvas)
 
-  private.reset_light_buffer(self.light_buffer, self.env_light)
+  private.reset_light_buffer(self.light_buffer, self)
 
   local sx, sy
 	for i, light in ipairs(self.lights) do
@@ -219,14 +228,24 @@ function private.drawto(canvas, shader, fn, fn_args)
   lg.pop()
 end
 
-function private.reset_light_buffer(canvas, env_light)
+function private.reset_light_buffer(canvas, world)
   lg.setCanvas(canvas)
   lg.clear()
-  if env_light then
-    lg.setColor(unpack(env_light))
-    lg.rectangle('fill', 0, 0, canvas:getDimensions())
-    lg.setColor(1, 1, 1, 1)
+
+  local r, g, b, a = lg.getColor()
+  if world.env_light then
+    lg.setColor(unpack(world.env_light))
   end
+
+  if world.env_tex then
+    local cw, ch = canvas:getDimensions()
+    local tw, th = world.env_tex:getDimensions()
+    lg.draw(world.env_tex, 0, 0, 0, cw / tw, ch / th)
+  else
+    lg.rectangle('fill', 0, 0, canvas:getDimensions())
+  end
+
+  lg.setColor(r, g, b, a)
   lg.setCanvas()
 end
 
